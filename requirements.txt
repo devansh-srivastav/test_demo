@@ -3,7 +3,7 @@ python-dotenv
 torch
 qdrant-client
 llama-index
-langchain
+langchain==0.2.7
 scikit-learn
 scipy
 matplotlib
