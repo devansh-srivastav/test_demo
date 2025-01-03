@@ -4,6 +4,8 @@ torch
 qdrant-client
 llama-index
 langchain==0.2.7
+langchain-community==0.2.7
+langchain-core==0.2.12
 scikit-learn
 scipy
 matplotlib
