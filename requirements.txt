@@ -9,3 +9,4 @@ scipy
 matplotlib
 pillow
 numpy
+llama-index-vector-stores-qdrant
