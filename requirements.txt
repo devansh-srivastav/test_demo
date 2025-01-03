@@ -28,7 +28,6 @@ chromadb==0.4.24
 clarifai==10.5.3
 clarifai-grpc==10.6.1
 click==8.1.7
-cohere==5.5.8
 coloredlogs==15.0.1
 contextlib2==21.6.0
 contourpy==1.2.1
@@ -48,8 +47,6 @@ docx2txt==0.8
 email_validator==2.1.2
 embedchain==0.1.116
 exceptiongroup==1.2.1
-fastapi==0.111.0
-fastapi-cli==0.0.4
 fastavro==1.9.5
 filelock==3.15.1
 flatbuffers==24.3.25
@@ -133,8 +130,6 @@ MarkupSafe==2.1.5
 marshmallow==3.21.3
 matplotlib==3.8.4
 mdurl==0.1.2
-memzero==0.0.7
-mistralai==0.1.8
 mmh3==4.1.0
 monotonic==1.6
 more-itertools==10.3.0
