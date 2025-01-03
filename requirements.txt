@@ -1,0 +1,11 @@
+streamlit
+python-dotenv
+torch
+qdrant-client
+llama-index
+langchain
+scikit-learn
+scipy
+matplotlib
+pillow
+numpy
