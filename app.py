@@ -1857,6 +1857,7 @@ if 'report_generated' not in st.session_state:
     st.session_state.messages = None
     st.session_state.radio = None
     
+uploaded_file = None
 selected_sample = st.selectbox("Select a sample image or upload image", ["Select Sample"] + list(examples.keys()))
 
 if "previous_selection" not in st.session_state:
