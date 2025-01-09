@@ -1671,6 +1671,19 @@ st.set_page_config(
 
 st.subheader('Demonstrating Enhanced Interpretability in Radiology Report Generation with Multi-Agent RAG and Concept Bottleneck Models')
 
+st.markdown(
+    """
+    <style>
+    .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
+    .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137,
+    .viewerBadge_text__1JaDK {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 embed_model = OpenAIEmbedding()
 client = qdrant_client.QdrantClient(location=":memory:")
 vector_store = QdrantVectorStore(client=client, collection_name="test_store")
