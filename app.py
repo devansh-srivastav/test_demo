@@ -1670,7 +1670,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.subheader('Demonstrating Enhanced Interpretability in Radiology Report Generation with Multi-Agent RAG and Concept Bottleneck Models')
+st.subheader('CBM-RAG: Demonstrating Enhanced Interpretability in Radiology Report Generation with Multi-Agent RAG and Concept Bottleneck Models')
 
 st.markdown(
     """
