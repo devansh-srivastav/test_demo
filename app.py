@@ -1889,6 +1889,9 @@ if "previous_selection" not in st.session_state:
 if 'toggles' not in st.session_state:
     st.session_state.toggles = None
 
+if 'generate_button' not in st.session_state:
+    st.session_state.generate_button = False
+
 if selected_sample != "Select Sample":
     if st.session_state.previous_selection != selected_sample:
         st.session_state.report_generated = False
@@ -1902,6 +1905,7 @@ if selected_sample != "Select Sample":
         st.session_state.toggles = None
         st.session_state.previous_selection = selected_sample
         st.session_state.sample_delay_done = False
+        st.session_state.generate_button = False
     uploaded_file = simulate_file_upload(examples[selected_sample])
     st.session_state.uploaded_file = uploaded_file
     st.session_state.report_generated = True
@@ -2034,51 +2038,57 @@ if uploaded_file is not None:
 
     with col2:
         st.write()
-        if using_sample:
-            st.session_state.llama_index_agent = generate_report(class_mapping, predicted_class, sorted_concepts, sorted_contributions, None, return_tool=using_sample)
-        if not st.session_state.report_generated:
-            with st.spinner("Generating report..."):
-                _, st.session_state.llama_index_agent = generate_report(class_mapping, predicted_class, sorted_concepts, sorted_contributions, None)
-        st.session_state.logs = re.sub(r'\x1b\[[0-9;]*m', '', st.session_state.logs)
-        with st.expander("See logs for intermediate steps"):
-            html = "<div style='height: 300px; overflow-y: scroll; padding: 10px'>"
-            for log in st.session_state.logs.split("\n"):
-                if "[DEBUG]" in log:
-                    html += f'<p style="color:blue">{log}</p>'
-                elif ">" in log:
-                    html += f'<p style="color:red">{log}</p>'
-                else:
-                    html += f'<p style="color:green">{log}</p>'
-            html += "</div>"
-            st.markdown(html, unsafe_allow_html=True)
-        st.markdown(":blue[<b>Generated Report</b>]", unsafe_allow_html=True)
-        with st.container(height=800):
-            st.markdown(st.session_state.report)
-        st.markdown(":blue[<i>The report is generated based on the predicted concept contribution scores and using available clinical documentations.</i>]", unsafe_allow_html=True)
+        generate_button = st.button("Generate Report")
+        if generate_button:
+            st.session_state.generate_button = True
+
+        if st.session_state.generate_button:
+            if using_sample:
+                st.session_state.llama_index_agent = generate_report(class_mapping, predicted_class, sorted_concepts, sorted_contributions, None, return_tool=using_sample)
+            if not st.session_state.report_generated:
+                with st.spinner("Generating report..."):
+                    _, st.session_state.llama_index_agent = generate_report(class_mapping, predicted_class, sorted_concepts, sorted_contributions, None)
+            st.session_state.logs = re.sub(r'\x1b\[[0-9;]*m', '', st.session_state.logs)
+            with st.expander("See logs for intermediate steps"):
+                html = "<div style='height: 300px; overflow-y: scroll; padding: 10px'>"
+                for log in st.session_state.logs.split("\n"):
+                    if "[DEBUG]" in log:
+                        html += f'<p style="color:blue">{log}</p>'
+                    elif ">" in log:
+                        html += f'<p style="color:red">{log}</p>'
+                    else:
+                        html += f'<p style="color:green">{log}</p>'
+                html += "</div>"
+                st.markdown(html, unsafe_allow_html=True)
+            st.markdown(":blue[<b>Generated Report</b>]", unsafe_allow_html=True)
+            with st.container(height=800):
+                st.markdown(st.session_state.report)
+            st.markdown(":blue[<i>The report is generated based on the predicted concept contribution scores and using available clinical documentations.</i>]", unsafe_allow_html=True)
 
     with col3:
-        if st.session_state.report_generated:
-            with st.container(height=1100):
-                # st.write(st.session_state.messages is None)
-                if st.session_state.messages is None:
-                    st.session_state.messages = [
-                        {"role": "system", "content": f"You are a radiologist. The detected disease is {class_mapping[predicted_class]}. The concepts and their contributions to the classification are as follows: {sorted_concepts} and {sorted_contributions}. The higher values of contributions indicate the importance of the concepts in the classification of the disease. Negative values of contribution means the concept does not contribute for the classification. The disease has been detected based on the presence of these concepts. The radiology report for this patient has been generated as follows: {st.session_state.report}"},
-                        {"role": "assistant", "content": "Ask me anything about the chest x-ray report or the disease detected."}]
-
-                # Chat interface for user input and displaying chat history
-                if prompt := st.chat_input("Your question"):
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                for message in st.session_state.messages:
-                    if message["role"] == "system":
-                        continue
-                    with st.chat_message(message["role"]):
-                        st.write(message["content"])
-
-                # Generate and display the response from the chat engine
-                if st.session_state.messages[-1]["role"] != "assistant":
-                    with st.chat_message("assistant"):
-                        with st.spinner("Thinking..."):
-                            response = st.session_state.llama_index_agent.run(f"Question: prompt \n Previous messages: {st.session_state.messages}")
-                            st.write(response)
-                            message = {"role": "assistant", "content": response}
-                            st.session_state.messages.append(message)
+        if st.session_state.generate_button:
+            if st.session_state.report_generated:
+                with st.container(height=1100):
+                    # st.write(st.session_state.messages is None)
+                    if st.session_state.messages is None:
+                        st.session_state.messages = [
+                            {"role": "system", "content": f"You are a radiologist. The detected disease is {class_mapping[predicted_class]}. The concepts and their contributions to the classification are as follows: {sorted_concepts} and {sorted_contributions}. The higher values of contributions indicate the importance of the concepts in the classification of the disease. Negative values of contribution means the concept does not contribute for the classification. The disease has been detected based on the presence of these concepts. The radiology report for this patient has been generated as follows: {st.session_state.report}"},
+                            {"role": "assistant", "content": "Ask me anything about the chest x-ray report or the disease detected."}]
+    
+                    # Chat interface for user input and displaying chat history
+                    if prompt := st.chat_input("Your question"):
+                        st.session_state.messages.append({"role": "user", "content": prompt})
+                    for message in st.session_state.messages:
+                        if message["role"] == "system":
+                            continue
+                        with st.chat_message(message["role"]):
+                            st.write(message["content"])
+    
+                    # Generate and display the response from the chat engine
+                    if st.session_state.messages[-1]["role"] != "assistant":
+                        with st.chat_message("assistant"):
+                            with st.spinner("Thinking..."):
+                                response = st.session_state.llama_index_agent.run(f"Question: prompt \n Previous messages: {st.session_state.messages}")
+                                st.write(response)
+                                message = {"role": "assistant", "content": response}
+                                st.session_state.messages.append(message)
