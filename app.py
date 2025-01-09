@@ -1689,6 +1689,7 @@ hide_streamlit_style = """
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
+    ._profileContainer_gzau3_53 {visibility: hidden}
 </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
